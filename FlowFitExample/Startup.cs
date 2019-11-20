@@ -1,3 +1,5 @@
+using System.Net;
+using System.Threading.Tasks;
 using FlowFitExample.Managers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -14,6 +16,12 @@ namespace FlowFitExample
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            // Needed to re-inject Newtonsoft.  New System.JSON can't handle polymorphism
+            // https://github.com/dotnet/corefx/issues/41338
+            // https://github.com/dotnet/corefx/issues/38650
+            services.AddMvc()
+                .AddNewtonsoftJson();
+
             services.AddRouting();
             services.AddControllers();
 
@@ -32,11 +40,22 @@ namespace FlowFitExample
             }
 
             app.UseRouting();
-            app.UseEndpoints(e => e.MapControllers());
+            app.UseEndpoints(e =>
+                {
+                e.MapControllers();
+                // Anything that begins with /api and doesn't match a controller hits a 404 instead of going to the SPA
+                e.Map("{*url:regex(^api.*)}", context =>
+                    {
+                        context.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                        return Task.CompletedTask;
+                    });
+                });
 
-            app.UseStaticFiles();
             app.UseSpaStaticFiles();
-            app.UseSpa(spa => { spa.Options.SourcePath = "ClientApp"; });
+            app.UseSpa(spa =>
+            {
+                spa.Options.SourcePath = "ClientApp";
+            });
         }
     }
 }

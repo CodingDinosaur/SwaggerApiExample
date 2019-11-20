@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 namespace FlowFitExample.Controllers
 {
     [ApiController]
-    [Route("science")]
+    [Route("api/science")]
     public class ScienceController : Controller
     {
         private readonly IScienceManager _scienceManager;

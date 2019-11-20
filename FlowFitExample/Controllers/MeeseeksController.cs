@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 namespace FlowFitExample.Controllers
 {
     [ApiController]
-    [Route("meeseeks")]
+    [Route("api/meeseeks")]
     public class MeeseeksController : Controller
     {
         private readonly IMeeseeksManager _meeseeksManager;
