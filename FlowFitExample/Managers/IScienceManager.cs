@@ -7,6 +7,7 @@ namespace FlowFitExample.Managers
     {
         DinosaurGenome RegisterNewDinosaurGenome(string name, byte[] geneticData);
         DinosaurGenome GetDinosaurGenomeByName(string name);
+        void DeactivateDinosaurGenome(string hash);
         float CalculatePlatypusCoolness(Platypus platypus, bool considerBillLength = true);
         List<StringSegment> GetScienceyWords(int limit);
     }

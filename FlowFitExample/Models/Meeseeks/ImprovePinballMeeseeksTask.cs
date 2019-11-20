@@ -11,7 +11,7 @@ namespace FlowFitExample.Models.Meeseeks
 
         public override void Execute()
         {
-            _log.LogInformation("Hey look at me, I'm Mr. Meeseeks and we're at Blips & Chitz!");
+            Log.LogInformation("Hey look at me, I'm Mr. Meeseeks and we're at Blips & Chitz!");
         }
     }
 }
