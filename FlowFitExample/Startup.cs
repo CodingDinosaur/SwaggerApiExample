@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-
+using Microsoft.OpenApi.Models;
 
 namespace FlowFitExample
 {
@@ -29,6 +29,11 @@ namespace FlowFitExample
 
             services.AddSingleton<IMeeseeksManager, MeeseeksManager>();
             services.AddSingleton<IScienceManager, ScienceManager>();
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "FlowFitExample API", Version = "v1" });
+                
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -38,6 +43,9 @@ namespace FlowFitExample
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseSwagger()
+                .UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "FlowFitApi Example V1"));
 
             app.UseRouting();
             app.UseEndpoints(e =>
