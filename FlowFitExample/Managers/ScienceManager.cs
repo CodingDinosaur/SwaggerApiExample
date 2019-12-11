@@ -28,7 +28,7 @@ namespace FlowFitExample.Managers
             _log = log;
         }
 
-        public DinosaurGenome RegisterNewDinosaurGenome(string name, byte[] geneticData)
+        public DinosaurGenome RegisterNewDinosaurGenome(string name, Span<byte> geneticData)
         {
             var newGenome = new DinosaurGenome(name, name + " (but fancy)", geneticData);
             var hash = ComputeDinosaurHash(newGenome);

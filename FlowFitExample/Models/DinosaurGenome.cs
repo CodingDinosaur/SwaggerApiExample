@@ -1,12 +1,13 @@
-﻿namespace FlowFitExample.Models
+﻿using System;
+namespace FlowFitExample.Models
 {
     public class DinosaurGenome
     {
-        public DinosaurGenome(string commonName, string scienceyName, byte[] topSecretGeneticData)
+        public DinosaurGenome(string commonName, string scienceyName, Span<byte> topSecretGeneticData)
         {
             CommonName = commonName;
             ScienceyName = scienceyName;
-            TopSecretGeneticData = topSecretGeneticData;
+            TopSecretGeneticData = topSecretGeneticData.ToArray();
         }
 
         public string CommonName { get; set; }
