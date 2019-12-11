@@ -3,18 +3,23 @@ WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
+FROM node:stretch-slim as clientBuild
+WORKDIR /client
+COPY /ClientApp .
+RUN rm -rf dist
+RUN npm install
+RUN $(npm bin)/ng build --prod
+
 FROM mcr.microsoft.com/dotnet/core/sdk:3.0-buster AS build
 WORKDIR /src
-COPY ["FlowFitExample/FlowFitExample.csproj", "FlowFitExample/"]
-RUN dotnet restore "FlowFitExample/FlowFitExample.csproj"
 COPY . .
-WORKDIR "/src/FlowFitExample"
-RUN dotnet build "FlowFitExample.csproj" -c Release -o /app/build
-
-FROM build AS publish
 RUN dotnet publish "FlowFitExample.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
-COPY --from=publish /app/publish .
+COPY --from=build /app/publish .
+COPY --from=clientBuild /client/dist ClientApp/dist
+ENV ASPNETCORE_URLS "http://+:5000"
+RUN useradd app
+USER app
 ENTRYPOINT ["dotnet", "FlowFitExample.dll"]
