@@ -12,7 +12,7 @@ namespace FlowFitExample.Managers
     public class ScienceManager : IScienceManager
     {
         private readonly List<(string Hash, DinosaurGenome Genome)> _dinosaurs = new List<(string, DinosaurGenome)>();
-        private List<Platypus> _platypuses = new List<Platypus>();
+        private readonly List<Platypus> _platypuses = new List<Platypus>();
         private readonly ILogger<ScienceManager> _log;
 
         private readonly List<StringSegment> _scienceyWords = new List<StringSegment>
@@ -70,7 +70,7 @@ namespace FlowFitExample.Managers
             return _scienceyWords;
         }
 
-        private string ComputeDinosaurHash(DinosaurGenome genome)
+        private static string ComputeDinosaurHash(DinosaurGenome genome)
         {
             using var ms = new MemoryStream();
             using var md5 = MD5.Create();

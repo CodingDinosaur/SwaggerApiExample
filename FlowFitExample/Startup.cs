@@ -1,5 +1,3 @@
-using System.Net;
-using System.Threading.Tasks;
 using FlowFitExample.Managers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -29,6 +27,7 @@ namespace FlowFitExample
 
             services.AddSingleton<IMeeseeksManager, MeeseeksManager>();
             services.AddSingleton<IScienceManager, ScienceManager>();
+            
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "FlowFitExample API", Version = "v1" });
@@ -48,21 +47,19 @@ namespace FlowFitExample
                 .UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "FlowFitApi Example V1"));
 
             app.UseRouting();
-            app.UseEndpoints(e =>
-                {
+            app.UseEndpoints(e => {
                 e.MapControllers();
-                // Anything that begins with /api and doesn't match a controller hits a 404 instead of going to the SPA
-                e.Map("{*url:regex(^api.*)}", context =>
-                    {
-                        context.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                        return Task.CompletedTask;
-                    });
-                });
+            });
 
-            app.UseSpaStaticFiles();
-            app.UseSpa(spa =>
+            app.MapWhen(context => 
+                !(context.Request.Path.Value.StartsWith("/api") ||
+                context.Request.Path.Value.StartsWith("/swagger")), builder =>
             {
-                spa.Options.SourcePath = "ClientApp";
+                builder.UseSpaStaticFiles();
+                builder.UseSpa(spa =>
+                {
+                    spa.Options.SourcePath = "ClientApp";
+                });
             });
         }
     }
