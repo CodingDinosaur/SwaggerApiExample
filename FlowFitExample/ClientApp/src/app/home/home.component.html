@@ -25,18 +25,10 @@
         </button>
       </div>
        <div>
-         <a routerLink="/">
             FlowFit Swagger Example
-         </a>
        </div>
        <div fxFlex fxLayout fxLayoutAlign="flex-end"  fxHide.xs>
           <ul fxLayout fxLayoutGap="20px" class="navigation-items">
-              <!-- <li>
-                  <a>
-                    <mat-icon class="icon">input</mat-icon>
-                    <span  class="label">Login</span>
-                   </a>
-              </li> -->
               <li>
                 <a
                   routerLink="/">
@@ -44,17 +36,17 @@
                     <span class="label">Home</span>
                 </a>
               </li>
-              <!-- <li>              
-                  <a>
+              <li>              
+                  <a href="/swagger">
                     <mat-icon class="icon">input</mat-icon>
-                    <span class="label">LogOut</span>
+                    <span class="label">Swagger</span>
                    </a>
-              </li> -->
+              </li>
           </ul>
        </div>
       </mat-toolbar>
       <main>
-        <router-outlet></router-outlet>
+        <router-outlet name="home"></router-outlet>
       </main>
     </mat-sidenav-content>
   </mat-sidenav-container>
