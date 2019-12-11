@@ -1,3 +1,4 @@
+using System;
 using FlowFitExample.Managers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -31,7 +32,7 @@ namespace FlowFitExample
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "FlowFitExample API", Version = "v1" });
-                
+                c.IncludeXmlComments(AppDomain.CurrentDomain.BaseDirectory + "FlowFitExample.xml", true);
             });
         }
 
