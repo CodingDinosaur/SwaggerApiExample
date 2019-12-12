@@ -2,9 +2,12 @@
 
 namespace FlowFitExample.Models.Meeseeks
 {
+    /// <summary>
+    /// A typical Meeseeks task
+    /// </summary>
     public class GeneralMeeseeksTask : BaseMeeseeksTask
     {
-        public GeneralMeeseeksTask(MeeseeksTaskType taskType, string name, ILogger log) : base(taskType, name, log) { }
+        public GeneralMeeseeksTask(MeeseeksTaskCategory taskCategory, string name, ILogger log) : base(taskCategory, name, log) { }
 
         public override void Execute()
         {

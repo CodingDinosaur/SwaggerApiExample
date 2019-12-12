@@ -8,7 +8,7 @@ namespace FlowFitExample.Models.Frontend
     public class StartMeeseeksTaskRequest
     {
         /// <summary>
-        /// Meeseeks task type name (see enum MeeseeksTaskType)
+        /// Meeseeks task type name (see enum MeeseeksTaskCategory)
         /// </summary>
         [Required]
         public string TaskTypeName { get; set; }

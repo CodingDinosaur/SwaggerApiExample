@@ -44,7 +44,7 @@ namespace FlowFitExample.Controllers
         public IActionResult StartTask(StartMeeseeksTaskRequest request)
         {
             var (task, typeInfo) = GenerateMeeseeksTask(request);
-            if (task.TaskType == MeeseeksTaskType.Unknown)
+            if (task.TaskCategory == MeeseeksTaskCategory.Unknown)
             {
                 return StatusCode(500, new TaskStartFailureInfo("Task generator was unable to determine task type"));
             }
@@ -52,11 +52,11 @@ namespace FlowFitExample.Controllers
             var genericMethod = _meeseeksManager.GetType().GetMethod(nameof(_meeseeksManager.SpawnMeeseeksForTask))
                 ?.MakeGenericMethod(typeInfo);
             var meeseeksInfo = genericMethod?.Invoke(_meeseeksManager, new object[] { task }) as MrMeeseeks;
-
+            
             if (meeseeksInfo == null) { return Problem(); }
 
             meeseeksInfo.CurrentTask.Execute();
-            return Ok(new StartMeeseeksTaskResponse(true, meeseeksInfo, typeInfo.Name));
+            return Ok(new StartMeeseeksTaskResponse(meeseeksInfo, typeInfo.Name));
         }
 
         /// <summary>
@@ -81,7 +81,7 @@ namespace FlowFitExample.Controllers
         public IActionResult GetGenericTaskReport()
         {
             var results = _meeseeksManager.GetAllMeeseeksOnTask<GeneralMeeseeksTask>()
-                .Select(m => new MeeseeksTaskStatus(m.Id, m.CurrentTask.TaskType.ToString(), m.CurrentTask))
+                .Select(m => new MeeseeksTaskStatus(m.Id, m.CurrentTask.TaskCategory, m.CurrentTask))
                 .ToArray();
 
             return Ok(results);
@@ -91,7 +91,7 @@ namespace FlowFitExample.Controllers
         /// Get details for a specific Mr. Meeseeks instance by ID
         /// </summary>
         /// <param name="id">GUID of the requested Mr. Meeseeks</param>
-        /// <remarks>See <see cref="MeeseeksTaskType"/> for valid values</remarks>
+        /// <remarks>See <see cref="MeeseeksTaskCategory"/> for valid values</remarks>
         [HttpGet("{id:guid}")]
         [Produces(typeof(MrMeeseeks))]
         public IActionResult GetMeeseeksById([FromRoute] Guid id)
@@ -110,7 +110,7 @@ namespace FlowFitExample.Controllers
         {
             { TaskTypeName: nameof(ImproveGolfMeeseeksTask) } => (new ImproveGolfMeeseeksTask(_log) as BaseMeeseeksTask, typeof(ImproveGolfMeeseeksTask)),
             { TaskTypeName: nameof(ImprovePinballMeeseeksTask) } => (new ImprovePinballMeeseeksTask(_log) as BaseMeeseeksTask, typeof(ImprovePinballMeeseeksTask)),
-            _ => (new GeneralMeeseeksTask(MeeseeksTaskType.Unknown, request.TaskTypeName, _log) as BaseMeeseeksTask, typeof(GeneralMeeseeksTask)),
+            _ => (new GeneralMeeseeksTask(MeeseeksTaskCategory.Unknown, request.TaskTypeName, _log) as BaseMeeseeksTask, typeof(GeneralMeeseeksTask)),
         };
 
     }

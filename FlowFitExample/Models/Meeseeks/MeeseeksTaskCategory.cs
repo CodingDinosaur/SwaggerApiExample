@@ -1,10 +1,13 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace FlowFitExample.Models
+namespace FlowFitExample.Models.Meeseeks
 {
+    /// <summary>
+    /// Category of a Meeseeks task
+    /// </summary>
     [JsonConverter(typeof(StringEnumConverter))]
-    public enum MeeseeksTaskType
+    public enum MeeseeksTaskCategory
     {
         Unknown,
         Simple,

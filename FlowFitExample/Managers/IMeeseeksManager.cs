@@ -1,6 +1,7 @@
 ﻿using System;
 using FlowFitExample.Models;
 using System.Collections.Generic;
+using FlowFitExample.Models.Meeseeks;
 
 namespace FlowFitExample.Managers
 {

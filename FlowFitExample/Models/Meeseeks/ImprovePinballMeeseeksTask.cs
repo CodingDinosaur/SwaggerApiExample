@@ -2,12 +2,15 @@
 
 namespace FlowFitExample.Models.Meeseeks
 {
+    /// <summary>
+    /// A Meeseeks task focused on improving pinball scoress
+    /// </summary>
     public class ImprovePinballMeeseeksTask : BaseMeeseeksTask
     {
         private const string TaskName = "Improve Pinball Score";
 
         public ImprovePinballMeeseeksTask(ILogger log) 
-            : base(MeeseeksTaskType.Simple, TaskName, log) { }
+            : base(MeeseeksTaskCategory.Simple, TaskName, log) { }
 
         public override void Execute()
         {

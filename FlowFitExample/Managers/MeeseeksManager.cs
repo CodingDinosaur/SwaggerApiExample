@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using FlowFitExample.Models;
+using FlowFitExample.Models.Meeseeks;
 using Microsoft.Extensions.Logging;
 
 namespace FlowFitExample.Managers

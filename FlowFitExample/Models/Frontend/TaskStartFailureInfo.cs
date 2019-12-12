@@ -1,14 +1,16 @@
-﻿namespace FlowFitExample.Models.Frontend
+﻿using FlowFitExample.Models.Meeseeks;
+
+namespace FlowFitExample.Models.Frontend
 {
     /// <summary>
     /// Information about the failure to start a meeseeks task
     /// </summary>
     public class TaskStartFailureInfo
     {
-        public TaskStartFailureInfo(string failureMessage, MeeseeksTaskType taskType = MeeseeksTaskType.Unknown)
+        internal TaskStartFailureInfo(string failureMessage, MeeseeksTaskCategory taskCategory = MeeseeksTaskCategory.Unknown)
         {
             FailureMessage = failureMessage;
-            TaskType = taskType;
+            TaskCategory = taskCategory;
         }
 
         /// <summary>
@@ -18,6 +20,6 @@
         /// <summary>
         /// Task type, or unknown if type determination failed
         /// </summary>
-        public MeeseeksTaskType TaskType { get; set; }
+        public MeeseeksTaskCategory TaskCategory { get; set; }
     }
 }
