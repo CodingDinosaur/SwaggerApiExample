@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace SwaggerApiExample.Models.Meeseeks
 {
@@ -9,9 +11,10 @@ namespace SwaggerApiExample.Models.Meeseeks
     {
         public GeneralMeeseeksTask(MeeseeksTaskCategory taskCategory, string name, ILogger log) : base(taskCategory, name, log) { }
 
-        public override void Execute()
+        public override async Task ExecuteAsync()
         {
             Log.LogInformation("I'm Mr. Meeseeks, look at me!");
+            await Task.Delay(TimeSpan.FromSeconds(1));
         }
     }
 }

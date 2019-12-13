@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace SwaggerApiExample.Models.Meeseeks
 {
@@ -27,6 +28,6 @@ namespace SwaggerApiExample.Models.Meeseeks
             Log = log;
         }
 
-        public abstract void Execute();
+        public abstract Task ExecuteAsync();
     }
 }

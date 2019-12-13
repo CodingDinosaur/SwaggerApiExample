@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using SwaggerApiExample.Managers;
 using SwaggerApiExample.Models;
 using SwaggerApiExample.Models.Frontend;
@@ -21,7 +22,7 @@ namespace SwaggerApiExample.Controllers
         private readonly IMeeseeksManager _meeseeksManager;
         private readonly ILogger<MeeseeksController> _log;
 
-        internal MeeseeksController(ILogger<MeeseeksController> log, IMeeseeksManager meeseeksManager)
+        public MeeseeksController(ILogger<MeeseeksController> log, IMeeseeksManager meeseeksManager)
         {
             _log = log;
             _meeseeksManager = meeseeksManager;
@@ -41,7 +42,7 @@ namespace SwaggerApiExample.Controllers
         [HttpPost("")]
         [ProducesResponseType(typeof(StartMeeseeksTaskResponse), 200)]
         [ProducesResponseType(typeof(TaskStartFailureInfo), 500)]
-        public IActionResult StartTask(StartMeeseeksTaskRequest request)
+        public async Task<IActionResult> StartTask(StartMeeseeksTaskRequest request)
         {
             var (task, typeInfo) = GenerateMeeseeksTask(request);
             if (task.TaskCategory == MeeseeksTaskCategory.Unknown)
@@ -55,7 +56,7 @@ namespace SwaggerApiExample.Controllers
             
             if (meeseeksInfo == null) { return Problem(); }
 
-            meeseeksInfo.CurrentTask.Execute();
+            await meeseeksInfo.CurrentTask.ExecuteAsync();
             return Ok(new StartMeeseeksTaskResponse(meeseeksInfo, typeInfo.Name));
         }
 

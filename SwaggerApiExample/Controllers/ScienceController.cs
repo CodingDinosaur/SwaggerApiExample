@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using SwaggerApiExample.Managers;
 using SwaggerApiExample.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -19,7 +20,7 @@ namespace SwaggerApiExample.Controllers
         private readonly IScienceManager _scienceManager;
         private readonly ILogger<ScienceController> _log;
 
-        internal ScienceController(ILogger<ScienceController> log, IScienceManager scienceManager)
+        public ScienceController(ILogger<ScienceController> log, IScienceManager scienceManager)
         {
             _log = log;
             _scienceManager = scienceManager;
@@ -70,8 +71,9 @@ namespace SwaggerApiExample.Controllers
         /// <param name="limit">Maximum number of words to get</param>
         /// <returns>Nothing useful, honestly</returns>
         [HttpGet("words")]
-        public ActionResult<List<StringSegment>> GetAllScienceWords([FromQuery] int limit)
+        public async Task<ActionResult<List<StringSegment>>> GetAllScienceWords([FromQuery] int limit)
         {
+            await Task.Delay(TimeSpan.FromSeconds(1));
             return Ok(_scienceManager.GetScienceyWords(limit));
         }
     }
