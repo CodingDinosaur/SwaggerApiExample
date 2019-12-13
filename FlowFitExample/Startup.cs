@@ -2,6 +2,7 @@ using System;
 using FlowFitExample.Managers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -45,21 +46,30 @@ namespace FlowFitExample
             }
 
             app.UseSwagger()
-                .UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "FlowFitApi Example V1"));
+                .UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "FlowFitApi Example V1");
+                    c.InjectStylesheet("/static/css/swaggerui-dark.css");
+                });
 
             app.UseRouting();
+            app.UseStaticFiles();
             app.UseEndpoints(e => {
                 e.MapControllers();
             });
 
+            // Other route groups are excluded from the SPA middleware to ensure HTTP-level 404s happen
+            // Otherwise, invalid routes will end up getting JS errors from the Angular router
             app.MapWhen(context => 
                 !(context.Request.Path.Value.StartsWith("/api") ||
-                context.Request.Path.Value.StartsWith("/swagger")), builder =>
+                context.Request.Path.Value.StartsWith("/swagger") ||
+                context.Request.Path.Value.StartsWith("/static")), builder =>
             {
                 builder.UseSpaStaticFiles();
                 builder.UseSpa(spa =>
                 {
                     spa.Options.SourcePath = "ClientApp";
+                    if (env.IsDevelopment()) { spa.UseAngularCliServer("start"); }
                 });
             });
         }

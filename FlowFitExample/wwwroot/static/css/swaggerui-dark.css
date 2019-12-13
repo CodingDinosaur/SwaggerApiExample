@@ -1,0 +1,54 @@
+﻿div, p,
+.info .title,
+.swagger-ui a.nostyle,
+.swagger-ui .model,
+.swagger-ui .parameter__name,
+.swagger-ui .parameter__type,
+.swagger-ui .parameter__deprecated,
+.swagger-ui .parameter__in,
+.swagger-ui table thead tr th,
+.swagger-ui .response-col_status,
+.swagger-ui table thead tr td,
+.swagger-ui table.model,
+.swagger-ui .opblock .opblock-section-header h4,
+.swagger-ui label,
+.swagger-ui .tab li,
+.swagger-ui .opblock .opblock-section-header label,
+.swagger-ui .btn {
+    color: #ececec !important;
+}
+
+body,
+.swagger-ui .info .title,
+.swagger-ui .scheme-container,
+.swagger-ui select {
+    background-color: #222;
+    color: #ececec !important;
+}
+
+.swagger-ui .opblock .opblock-section-header {
+    background-color: transparent;
+}
+
+.swagger-ui textarea,
+.swagger-ui input[type=text] {
+    background-color: #41444e;
+    color: #ececec !important;
+}
+
+.swagger-ui .topbar {
+    background-color: #000;
+}
+
+.swagger-ui section.models h4,
+.swagger-ui .model-title {
+    color: #ececec !important;
+}
+
+.swagger-ui section.models {
+    background: #ff00f71a;
+    border-color: #ff00f7;    
+}
+.prop-type {
+    color: #8080f5 !important;
+}
