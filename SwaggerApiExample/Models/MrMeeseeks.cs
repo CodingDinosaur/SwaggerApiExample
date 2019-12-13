@@ -37,7 +37,7 @@ namespace SwaggerApiExample.Models
         public BaseMeeseeksTask CurrentTask { get; set; }
         
         /// <summary>
-        /// Whether or not the Meeseeks is currently alive & working on a task
+        /// Whether or not the Meeseeks is currently alive and working on a task
         /// </summary>
         public bool IsActive => BirthTime < DateTime.Now && !DeathTime.HasValue && CurrentTask != null;
         
