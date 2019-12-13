@@ -1,2 +1,2 @@
-docker build FlowFitExample -t flowfitexample:latest
-docker run -p 5000:5000 flowfitexample:latest
+docker build SwaggerApiExample -t SwaggerApiExample:latest
+docker run -p 5000:5000 SwaggerApiExample:latest
