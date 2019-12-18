@@ -8,7 +8,7 @@ This application can build, run, and serve its API for educational purposes, but
 - [Building &amp; Running](#building-amp-running)
     - [With Docker](#with-docker)
     - [With Visual Studio &amp; Node](#with-visual-studio-amp-node)
-- [What's In Here](#whats-in-here)
+- [A Self-Documenting API](#a-self-documenting-api)
   - [Enabling Swagger &amp; Swagger UI](#enabling-swagger-amp-swagger-ui)
     - [Register Swagger Services](#register-swagger-services)
     - [Inject Swagger &amp; Swagger UI into Request Pipeline](#inject-swagger-amp-swagger-ui-into-request-pipeline)
@@ -23,6 +23,20 @@ This application can build, run, and serve its API for educational purposes, but
     - [Generating an XML Document File](#generating-an-xml-document-file)
     - [Hooking up XML Docs to Swagger](#hooking-up-xml-docs-to-swagger)
   - [Further Reading](#further-reading)
+- [NSWag Client Generation](#nswag-client-generation)
+  - [NSwag Installation](#nswag-installation)
+  - [NSwag Configuration](#nswag-configuration)
+  - [Running NSwag using the Configuration](#running-nswag-using-the-configuration)
+  - [NSwag MSBuild Target](#nswag-msbuild-target)
+  - [Package Configuration](#package-configuration)
+  - [Versioning](#versioning)
+    - [Semantic Versioning Strategy](#semantic-versioning-strategy)
+- [Docker files &amp; Build Process](#docker-files-amp-build-process)
+  - [Containerized Hosting](#containerized-hosting)
+  - [Containerized Building](#containerized-building)
+    - [Multi-Stage Building](#multi-stage-building)
+  - [Containerized Package Publishing](#containerized-package-publishing)
+  - [Further Reading](#further-reading-1)
 
 # Basic Info
 - Written in C# 8.0
@@ -35,7 +49,7 @@ This application can build, run, and serve its API for educational purposes, but
 
 ### With Docker
 Simply run *buildAndRun.sh*, which will build and run the docker container for you:
-```console
+```bash
 docker build SwaggerApiExample -t swagger-api-example:latest
 docker run -p 5000:5000 swagger-api-example:latest
 ```
@@ -49,7 +63,7 @@ docker run -p 5000:5000 swagger-api-example:latest
 - Select the "SwaggerApiExample" build profile
 - Build and run!
 
-# What's In Here
+# A Self-Documenting API
 
 ## Enabling Swagger & Swagger UI
 *Swashbuckle* is the package which drives the generation of OpenAPI 3 spec files (a.k.a. "Swagger" files and the Swagger UI.  *Swashbuckle* is a well-established package available on Nuget.Org
@@ -241,3 +255,167 @@ Check out:
 - Custom Conventions:  https://docs.microsoft.com/en-us/aspnet/core/web-api/advanced/conventions?view=aspnetcore-3.1
 - Swashbuckle Github:  https://github.com/domaindrivendev/Swashbuckle
 - NSWag Github:  https://github.com/RicoSuter/NSwag
+
+# NSWag Client Generation
+
+An SDK with stronly typed C# contracts can be automatically generated at build-time using NSwag.  NSwag will first use the compiled host assembly to determine a the Open API description, then use a CSharp code generator to construct generated classes, operations, and clients.
+
+For full information about NSwag, see: http://nswag.org
+
+## NSwag Installation
+NSwag client generation will NOT occur automatically during local builds.  If you would like to generate the client assembly manually, you will need to install NSwag.
+
+There are several options for installation (NPM, MSI, Chocolatey, Zip archive).  See installation instructions here:  https://github.com/RSuter/NSwag/wiki/CommandLine
+
+## NSwag Configuration
+NSwag has a lot of options and currently they are all set up using the nswag.json file in the root of the repository.  The simplest way to modify this is using NSwagStudio, the windows desktop application for editing and configurating NSwag.  NSwagStudio will be installed automatically if you install the windows version of NSwag as descrbied above.  
+
+You can also find a plethora of documentation on the NSwag Wiki:  
+  - https://github.com/RSuter/NSwag/wiki
+  - https://github.com/RSuter/NSwag/wiki/NSwag-Configuration-Document
+
+You'll always want to make sure that the namespaces and package details are to your liking, since the client will generate a package for use by your consumers.
+
+## Running NSwag using the Configuration
+You can utilize the nswag.json file to generate the client via:
+```bash
+nswag run
+```
+
+The nswag run command will automatically locate the config file if it is named nswag.json.
+
+## NSwag MSBuild Target
+In this example, the NSWag.MSBuild package is used to enable build-time client generation.  Because we only want this to happen when our build scripts are running and not during local development builds, we create a custom target in the csproj file like so:
+
+```xml
+<Target Name="NSwag">
+    <Message Text="Running NSWag Client Code Generation..." Importance="High" />
+    <Exec Command="$(NSwagExe_Core30) run ./nswag.json" />
+</Target>
+```
+
+Then, when we want to execute this at build-time, we simply run the NSwag target:
+```bash
+dotnet restore && \
+    dotnet build -t:NSwag --configuration Release
+```
+
+In the configuration we've specified in our *nswag.json*, NSwag will output the generated code as *NSWagGeneratedCode.cs*.  Because the new csproj format is compiler-inclusive by default (meaning, it'll compile all .cs files it finds), you can follow the NSwag generation step with a regular build or publish to generate a compiled assembly containing the generated client.
+
+## Package Configuration
+Because our client csproj file will be used to generate the assembly *and* to pack the package, that's where we can store the basic meta-data about the package we're going to generate.  You can edit the project properties in Visual Studio to manage these, or edit the csproj directly.
+
+```xml
+<PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <PackageId>SwaggerApiExample.Client</PackageId>
+    <Version>1.0.0</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <Authors>Gilbert Samuelian</Authors>
+    <Company>Blizzard Entertainment</Company>
+    <Description>Auto-generated client for SwaggerApiExample, driving Meeseeks tasks and basic Dinosaur-related information.</Description>
+    <Copyright>2019</Copyright>
+    <RepositoryType>Git</RepositoryType>
+    <PackageIconUrl>https://avatars0.githubusercontent.com/u/26150969?s=400&u=abfbf0a8b378bd3571ec17f0cfcd22be6de3cb44&v=4</PackageIconUrl>
+    <RepositoryUrl>https://github.com/CodingDinosaur/SwaggerApiExample</RepositoryUrl>
+</PropertyGroup>
+```
+
+Note that you can also have a .nuspec file, or override most of these on the command-line at build time.
+
+## Versioning
+
+Proper versioning of your assemblies and packages is critical for your consumers.  In this example, the versions are variables which are then passed into the build process from the command-line scripts.
+
+```bash
+docker build SwaggerApiExample -t swagger-api-example:build --build-arg version=$version --build-arg assemblyVersion=$assemblyVersion
+```
+```dockerfile
+ARG version
+ARG assemblyVersion
+RUN dotnet publish "SwaggerApiExample.csproj" -c Release -o /app/publish -p:PackageVersion=$version -p:Version=$version -p:AssemblyVersion=$assemblyVersion
+```
+
+The reason for this is that the build number is generally something that will be determined by your pipeline or CI process, not something that you would hard-code into your scripts or input at design-time.  There are three version numbers we want to make sure to get right:
+- Assembly Version:  Generally only 3 positions (A.B.C), with 16-bit numeric values only.  Used primarily at run-time for assembly binding.
+- Product / File Version:  Up to 4 positions (A.B.C.D), treated more like a string.  Good for expressing individual build versions between assembly version changes.
+- Package version:  The Nuget package version can be 4 positions with alphanumerics and suffixes.  You should match the product version first, add suffixes second.
+  - Packages with suffixes are considered to be *pre-release* packages
+
+In this example repo, the versions are hard-coded in the *buildAndRun* script, but in a real-world scenario, you'd want to pass these in from your build pipeline.  (For example, we often compute them based on the last Git release + number of commits since that release)
+
+For example:
+- Assembly Version:  2.0.1  (Last Github release was 2.0.1)
+- Product Version:  2.0.1.15  (There have been 15 additional commits since the 2.0.1 release)
+- Package Version:  2.0.1.15-prerelease  (The package will only show up if someone looks for pre-release packages)
+
+### Semantic Versioning Strategy
+
+Before you go too deep down the rabbit hole of building your system, you'll want to decide on a good versioning strategy that you and your team can stick to.  
+
+If your application contains a forward-facing API layer of any kind, then it is **strongly** recommended you consider adhering to [Semantic Versioning standards (https://semver.org)](https://semver.org/).
+
+# Docker files & Build Process
+
+You may be wondering, "what's with all the Docker files", or "why do you build it like that" -- so I want to give a quick overview of the build strategy in place here.
+
+## Containerized Hosting
+
+The test application is hosted in a Docker container.  If you aren't familiar with Docker containers, or you've only heard about them, then I strongly suggest you check out some online resources or a Pluralsight course -- Docker can completely revolutionize the way you develop and host applications.
+
+By hosting the application in a Docker container, we can host it essentially anywhere and make changes to its hosting without having to worry about the application itself.  If we want to start out on bare metal, move to a dedicated VM, then later move to a fully orchestrated Kubernetes cluster, we won't have to change *anything* about the application itself to make that work.  Furthermore, we know it'll always work the same way -- there won't be any qwirks specific to the hosting OS itself (like differences in encodings, line endings, localization, packages, etc).  Everything the application needs to run anwywhere is fully self-contained in the light weight Docker image.
+
+## Containerized Building
+
+This one you may not have seen as often, but the same logic behind containzerized hosting has lef my team to containerized building.  We no longer have to worry about changes to build servers, switching CI platforms, or multitudes of other problems we used to have routinely when at the mercy of unforgiving build systems like Jenkins.
+
+Node is a notoriously painful dependency on build servers, but we never have to worry about incorrect or colliding node versions when we build in a container:
+```dockerfile
+FROM node:stretch-slim as clientBuild
+WORKDIR /client
+COPY /ClientApp .
+RUN rm -rf dist
+RUN npm install
+RUN $(npm bin)/ng build --prod
+```
+
+It also means that the ideal environment configuration to build, any packages, the correct versoins of MSBuild, etc -- it's all handled for us by Microsoft when they make the base images.  Ready to upgrade to the next version of the framework?  No worries, just change your compilation target and your base image tag, and that's it as far as compilation goes -- you will never have to remote into a builder to install SDKs again.
+
+```dockerfile
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.0-buster-slim AS base
+```
+
+### Multi-Stage Building
+
+Youll notice liberal use of the "as" keyword in dockerfile FROM statements.  This is to create a multi-stage docker build.  For more information, check out:  
+[Docker Documentation - Using Multi-Stage Builds](https://docs.docker.com/develop/develop-images/multistage-build/)
+
+## Containerized Package Publishing
+
+This is a trick that I came up with about a year and a half ago when faced with the challenge of wanting to pack and publish packages that were based on builds happening inside build containers.  Most of the solutions I saw involved doing a separate "dotnet publish" or build outside the container, but that effectively means you at least double your build time (since now you're building both inside, and out of the build container).  Additionally, it negates most of the beneficial reasons for containerized building to begin with.
+
+The other challenge is that we don't want to publish packages on *all* builds -- for example, PR CI builds or feature branch builds shouldn't push packages to the main package repo in most cases.  Ideally however, we'd still like to *build* the packages in those cases, so that if there's a problem, it shows up.
+
+So the idea I had, which is illustrated by the Client project in this repo, was to also build the nuget packages in a container, but then set the container's entry point to *dotnet nuget push*.  That way, you can *docker build* to generate everything and make sure the build passes, and if it's a build which should publish assets, you can *docker run* with the appropriate parameters to publish the nuget package.
+
+```dockerfile
+RUN dotnet pack --configuration Release -p:PackageVersion=$version -p:Version=$version -p:AssemblyVersion=$assemblyVersion -o ./nuget/
+COPY . .
+ENTRYPOINT [ "dotnet", "nuget", "push" ]
+```
+
+```bash
+# Publish client package to Nuget repository
+# We first force remove any old publish container that might be running
+docker rm -f nswag 2>/dev/null || true
+docker run nswag:build nuget/*.nupkg --source $NUGET_PUBLISH_SOURCE --api-key $NUGET_API_USER:$NUGET_API_KEY
+```
+
+You can see what this would look like in the *publishExample.sh* file.
+
+## Further Reading
+Check out:
+- Dockerfile Reference:  https://docs.docker.com/engine/reference/builder/
+- Docker Multi-stage builds:  https://docs.docker.com/develop/develop-images/multistage-build/
+- Semantic Versioning:  https://semver.org/

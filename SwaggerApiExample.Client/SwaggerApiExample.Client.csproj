@@ -2,6 +2,17 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+  	<PackageId>SwaggerApiExample.Client</PackageId>
+    <Version>1.0.0</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <Authors>Gilbert Samuelian</Authors>
+    <Company>Blizzard Entertainment</Company>
+    <Description>Auto-generated client for SwaggerApiExample, driving Meeseeks tasks and basic Dinosaur-related information.</Description>
+    <Copyright>2019</Copyright>
+    <RepositoryType>Git</RepositoryType>
+    <PackageIconUrl>https://avatars0.githubusercontent.com/u/26150969?s=400%26u=abfbf0a8b378bd3571ec17f0cfcd22be6de3cb44%26v=4</PackageIconUrl>
+    <RepositoryUrl>https://github.com/CodingDinosaur/SwaggerApiExample</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
