@@ -12,7 +12,9 @@ FROM mcr.microsoft.com/dotnet/core/sdk:3.0-buster AS build
 WORKDIR /src
 COPY . .
 RUN rm -rf ClientApp
-RUN dotnet publish "SwaggerApiExample.csproj" -c Release -o /app/publish
+ARG version
+ARG assemblyVersion
+RUN dotnet publish "SwaggerApiExample.csproj" -c Release -o /app/publish -p:PackageVersion=$version -p:Version=$version -p:AssemblyVersion=$assemblyVersion
 
 FROM base AS final
 EXPOSE 5000

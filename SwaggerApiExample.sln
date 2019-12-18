@@ -11,6 +11,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SwaggerApiExample.Client", "SwaggerApiExample.Client\SwaggerApiExample.Client.csproj", "{37D25AAE-841D-43FC-9FB0-147A82E18771}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{ADDC9C60-7198-4F32-AD3D-1056D95F9D67}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ADDC9C60-7198-4F32-AD3D-1056D95F9D67}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ADDC9C60-7198-4F32-AD3D-1056D95F9D67}.Release|Any CPU.Build.0 = Release|Any CPU
+		{37D25AAE-841D-43FC-9FB0-147A82E18771}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37D25AAE-841D-43FC-9FB0-147A82E18771}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37D25AAE-841D-43FC-9FB0-147A82E18771}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37D25AAE-841D-43FC-9FB0-147A82E18771}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
