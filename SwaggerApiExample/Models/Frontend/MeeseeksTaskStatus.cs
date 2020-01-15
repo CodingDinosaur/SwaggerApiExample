@@ -8,11 +8,12 @@ namespace SwaggerApiExample.Models.Frontend
     /// </summary>
     public class MeeseeksTaskStatus
     {
-        internal MeeseeksTaskStatus(Guid meeseeksId, MeeseeksTaskCategory taskCategory, BaseMeeseeksTask taskInfo)
+        internal MeeseeksTaskStatus(IMeeseeksTask taskInfo)
         {
-            MeeseeksId = meeseeksId;
-            TaskCategory = taskCategory;
-            TaskInfo = taskInfo;
+            MeeseeksId = taskInfo.AssignedMeeseeks;
+            TaskCategory = taskInfo.TaskCategory;
+            TaskName = taskInfo.Name;
+            HasStarted = true;
         }
 
         /// <summary>
@@ -28,6 +29,11 @@ namespace SwaggerApiExample.Models.Frontend
         /// <summary>
         /// Basic task information
         /// </summary>
-        public BaseMeeseeksTask TaskInfo { get; set; }
+        public string TaskName { get; set; }
+
+        /// <summary>
+        /// True if the task has started
+        /// </summary>
+        public bool HasStarted { get; set; }
     }
 }

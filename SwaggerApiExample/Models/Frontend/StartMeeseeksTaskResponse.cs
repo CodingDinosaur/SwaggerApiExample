@@ -1,4 +1,6 @@
-﻿namespace SwaggerApiExample.Models.Frontend
+﻿using SwaggerApiExample.Models.Meeseeks;
+
+namespace SwaggerApiExample.Models.Frontend
 {
     /// <summary>
     /// Response given when a requested task has started

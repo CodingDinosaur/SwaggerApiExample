@@ -12,9 +12,9 @@ namespace SwaggerApiExample.Models.Meeseeks
         private const string TaskName = "Improve Pinball Score";
 
         public ImprovePinballMeeseeksTask(ILogger log) 
-            : base(MeeseeksTaskCategory.Simple, TaskName, log) { }
+            : base(MeeseeksTaskCategory.Simple, log, TaskName) { }
 
-        public override async Task ExecuteAsync()
+        protected override async Task ExecuteInternalAsync(MrMeeseeks meeseeks)
         {
             Log.LogInformation("Hey look at me, I'm Mr. Meeseeks and we're at Blips & Chitz!");
             await Task.Delay(TimeSpan.FromSeconds(1));

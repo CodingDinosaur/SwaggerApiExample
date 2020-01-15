@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using SwaggerApiExample.Managers;
-using SwaggerApiExample.Models;
 using SwaggerApiExample.Models.Frontend;
 using SwaggerApiExample.Models.Meeseeks;
 using Microsoft.AspNetCore.Mvc;
@@ -50,11 +49,10 @@ namespace SwaggerApiExample.Controllers
                 return StatusCode(500, new TaskStartFailureInfo("Task generator was unable to determine task type"));
             }
 
-            var meeseeksInfo = _meeseeksManager.SpawnMeeseeksForTask(task);
-            if (meeseeksInfo == null) { return Problem(); }
-
-            await meeseeksInfo.CurrentTask.ExecuteAsync();
-            return Ok(new StartMeeseeksTaskResponse(meeseeksInfo, typeInfo.Name));
+            var meeseeksInfo = await _meeseeksManager.SpawnMeeseeksForTaskAsync(task);
+            return meeseeksInfo == null 
+                ? Problem() 
+                : Ok(new StartMeeseeksTaskResponse(meeseeksInfo, typeInfo.Name));
         }
 
         /// <summary>
@@ -62,11 +60,12 @@ namespace SwaggerApiExample.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("tasks")]
-        [ProducesResponseType(typeof(BaseMeeseeksTask[]), 200)]
+        [ProducesResponseType(typeof(MeeseeksTaskStatus[]), 200)]
         [ProducesResponseType(typeof(FailureInfo), 418)]
         public IActionResult GetAllActiveTasks()
         {
-            var allRunningTasks = _meeseeksManager.GetAllRunningTasks();
+            var allRunningTasks = _meeseeksManager.GetAllRunningTasks()
+                .Select(t => new MeeseeksTaskStatus(t));
             return allRunningTasks.Any()
                 ? Ok(allRunningTasks)
                 : StatusCode(418, new FailureInfo("No running tasks, so apparently I'm a teapot"));
@@ -77,11 +76,15 @@ namespace SwaggerApiExample.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("")]
-        [Produces(typeof(MeeseeksTaskStatus[]))]
+        [Produces(typeof(MeeseeksTaskStatusDetailed[]))]
         public IActionResult GetMeeseeksTaskReport([FromQuery] MeeseeksTaskCategory taskCategoryFilter = MeeseeksTaskCategory.Unknown)
         {
+            var allTasks = _meeseeksManager.GetAllRunningTasks();
             var results = _meeseeksManager.GetAllMeeseeksOnTask(taskCategoryFilter)
-                .Select(m => new MeeseeksTaskStatus(m.Id, m.CurrentTask.TaskCategory, m.CurrentTask))
+                .Join(allTasks,
+                    mrMeeseeks => mrMeeseeks.Id,
+                    task => task.AssignedMeeseeks,
+                    (mrMeeseeks, task) => new MeeseeksTaskStatusDetailed(task, mrMeeseeks))
                 .ToArray();
 
             return Ok(results);
@@ -105,12 +108,12 @@ namespace SwaggerApiExample.Controllers
             return Ok(mrMeeseeks);
         }
 
-        private (BaseMeeseeksTask Task, Type TypeInfo) GenerateMeeseeksTask(StartMeeseeksTaskRequest request)
+        private (IMeeseeksTask Task, Type TypeInfo) GenerateMeeseeksTask(StartMeeseeksTaskRequest request)
             => request switch
         {
-            { TaskTypeName: nameof(ImproveGolfMeeseeksTask) } => (new ImproveGolfMeeseeksTask(_log) as BaseMeeseeksTask, typeof(ImproveGolfMeeseeksTask)),
-            { TaskTypeName: nameof(ImprovePinballMeeseeksTask) } => (new ImprovePinballMeeseeksTask(_log) as BaseMeeseeksTask, typeof(ImprovePinballMeeseeksTask)),
-            _ => (new GeneralMeeseeksTask(MeeseeksTaskCategory.Unknown, request.TaskTypeName, _log) as BaseMeeseeksTask, typeof(GeneralMeeseeksTask)),
+            { TaskTypeName: nameof(ImproveGolfMeeseeksTask) } => (new ImproveGolfMeeseeksTask(_log) as IMeeseeksTask, typeof(ImproveGolfMeeseeksTask)),
+            { TaskTypeName: nameof(ImprovePinballMeeseeksTask) } => (new ImprovePinballMeeseeksTask(_log) as IMeeseeksTask, typeof(ImprovePinballMeeseeksTask)),
+            _ => (new GeneralMeeseeksTask(MeeseeksTaskCategory.Simple, _log, request?.TaskTypeName) as IMeeseeksTask, typeof(GeneralMeeseeksTask)),
         };
 
     }

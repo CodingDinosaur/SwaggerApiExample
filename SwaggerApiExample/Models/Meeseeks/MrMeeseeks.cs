@@ -1,7 +1,6 @@
 ﻿using System;
-using SwaggerApiExample.Models.Meeseeks;
 
-namespace SwaggerApiExample.Models
+namespace SwaggerApiExample.Models.Meeseeks
 {
     /// <summary>
     /// Representation of a Mr. Meeseeks
@@ -11,10 +10,11 @@ namespace SwaggerApiExample.Models
     /// </remarks>
     public class MrMeeseeks
     {
-        public MrMeeseeks(ulong catchphraseCounter, BaseMeeseeksTask currentTask)
+        public MrMeeseeks(ulong catchphraseCounter)
         {
             CatchphraseCounter = catchphraseCounter;
-            CurrentTask = currentTask;
+            Id = Guid.NewGuid();
+            BirthTime = DateTime.Now;
         }
 
         /// <summary>
@@ -36,16 +36,11 @@ namespace SwaggerApiExample.Models
         /// Datetime this Meeseeks poofed
         /// </summary>
         public DateTime? DeathTime { get; set; }
-        
-        /// <summary>
-        /// Task this Meeseeks is executing
-        /// </summary>
-        public BaseMeeseeksTask CurrentTask { get; set; }
-        
+
         /// <summary>
         /// Whether or not the Meeseeks is currently alive and working on a task
         /// </summary>
-        public bool IsActive => BirthTime < DateTime.Now && !DeathTime.HasValue && CurrentTask != null;
+        public bool IsActive => BirthTime < DateTime.Now && !DeathTime.HasValue;
         
         /// <summary>
         /// Whether or not the Meeseeks is likely losing his sanity due to old age
