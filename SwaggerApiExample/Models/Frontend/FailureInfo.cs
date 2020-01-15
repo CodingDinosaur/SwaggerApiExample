@@ -18,6 +18,9 @@ namespace SwaggerApiExample.Models.Frontend
         /// </summary>
         public string FailureMessage { get; set; }
 
+        /// <summary>
+        /// When the failure was encountered
+        /// </summary>
         public DateTime Encountered { get; set; }
     }
 }
