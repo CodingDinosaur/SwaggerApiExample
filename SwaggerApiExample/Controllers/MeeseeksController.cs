@@ -62,12 +62,14 @@ namespace SwaggerApiExample.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("tasks")]
-        [Produces(typeof(BaseMeeseeksTask[]))]
         [ProducesResponseType(typeof(BaseMeeseeksTask[]), 200)]
+        [ProducesResponseType(typeof(FailureInfo), 418)]
         public IActionResult GetAllActiveTasks()
         {
             var allRunningTasks = _meeseeksManager.GetAllRunningTasks();
-            return Ok(allRunningTasks);
+            return allRunningTasks.Any()
+                ? Ok(allRunningTasks)
+                : StatusCode(418, new FailureInfo("No running tasks, so apparently I'm a teapot"));
         }
 
         /// <summary>
