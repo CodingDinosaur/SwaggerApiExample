@@ -52,3 +52,7 @@ body,
 .prop-type {
     color: #8080f5 !important;
 }
+
+.swagger-ui .responses-inner h4, .swagger-ui .responses-inner h5 {
+    color: #a7b6de !important;
+}
