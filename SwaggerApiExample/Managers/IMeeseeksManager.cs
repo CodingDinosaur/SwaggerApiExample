@@ -7,10 +7,10 @@ namespace SwaggerApiExample.Managers
 {
     public interface IMeeseeksManager
     {
-        MrMeeseeks<TTask> SpawnMeeseeksForTask<TTask>(TTask task) where TTask : BaseMeeseeksTask;
+        MrMeeseeks SpawnMeeseeksForTask(BaseMeeseeksTask task);
         IEnumerable<BaseMeeseeksTask> GetAllRunningTasks();
         IEnumerable<MrMeeseeks> FindLateMeeseeks();
-        IEnumerable<MrMeeseeks<TTask>> GetAllMeeseeksOnTask<TTask>() where TTask : BaseMeeseeksTask;
+        IEnumerable<MrMeeseeks> GetAllMeeseeksOnTask(MeeseeksTaskCategory categoryFilter = MeeseeksTaskCategory.Unknown);
         MrMeeseeks GetMeeseeksById(Guid id);
     }
 }

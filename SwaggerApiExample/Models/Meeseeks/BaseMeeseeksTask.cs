@@ -19,7 +19,7 @@ namespace SwaggerApiExample.Models.Meeseeks
         public string Name { get; }
         
         protected ILogger Log;
-        const string DefaultTaskName = "Unnamed Meeseeks Task";
+        private const string DefaultTaskName = "Unnamed Meeseeks Task";
 
         protected BaseMeeseeksTask(MeeseeksTaskCategory taskCategory, string name, ILogger log)
         {

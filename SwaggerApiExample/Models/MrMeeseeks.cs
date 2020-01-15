@@ -9,8 +9,14 @@ namespace SwaggerApiExample.Models
     /// <remarks>
     /// Abstract because you can't have a meeseeks that isn't on a task
     /// </remarks>
-    public abstract class MrMeeseeks
+    public class MrMeeseeks
     {
+        public MrMeeseeks(ulong catchphraseCounter, BaseMeeseeksTask currentTask)
+        {
+            CatchphraseCounter = catchphraseCounter;
+            CurrentTask = currentTask;
+        }
+
         /// <summary>
         /// Unique ID of this Mr. Meeseeks
         /// </summary>
@@ -45,20 +51,5 @@ namespace SwaggerApiExample.Models
         /// Whether or not the Meeseeks is likely losing his sanity due to old age
         /// </summary>
         public bool IsLosingSanity => BirthTime < DateTime.Now && DateTime.Now - BirthTime >= TimeSpan.FromDays(2);
-    }
-
-    /// <inheritdoc cref="MrMeeseeks"/>
-    public class MrMeeseeks<TTask> : MrMeeseeks where TTask : BaseMeeseeksTask
-    {
-        public MrMeeseeks(ulong catchphraseCounter, TTask currentTask = null)
-        {
-            Id = Guid.NewGuid();
-            CatchphraseCounter = catchphraseCounter;
-            base.CurrentTask = currentTask;
-            BirthTime = DateTime.Now;
-        }
-
-        /// <inheritdoc cref="MrMeeseeks.CurrentTask"/>
-        public new TTask CurrentTask => base.CurrentTask as TTask;
     }
 }

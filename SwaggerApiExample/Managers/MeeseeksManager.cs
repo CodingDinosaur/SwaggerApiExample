@@ -17,9 +17,9 @@ namespace SwaggerApiExample.Managers
             _log = log;
         }
 
-        public MrMeeseeks<TTask> SpawnMeeseeksForTask<TTask>(TTask task) where TTask : BaseMeeseeksTask
+        public MrMeeseeks SpawnMeeseeksForTask(BaseMeeseeksTask task)
         {
-            var m = new MrMeeseeks<TTask>(0, task);
+            var m = new MrMeeseeks(0, task);
             _allMeeseeks.Add(m);
             return m;
         }
@@ -34,9 +34,9 @@ namespace SwaggerApiExample.Managers
             return _allMeeseeks.Where(m => m.IsLosingSanity);
         }
 
-        public IEnumerable<MrMeeseeks<TTask>> GetAllMeeseeksOnTask<TTask>() where TTask : BaseMeeseeksTask
+        public IEnumerable<MrMeeseeks> GetAllMeeseeksOnTask(MeeseeksTaskCategory taskCategoryFilter = MeeseeksTaskCategory.Unknown)
         {
-            return _allMeeseeks.Where(m => m.CurrentTask is TTask).Cast<MrMeeseeks<TTask>>();
+            return _allMeeseeks.Where(m => taskCategoryFilter == MeeseeksTaskCategory.Unknown || m.CurrentTask.TaskCategory == taskCategoryFilter);
         }
 
         public MrMeeseeks GetMeeseeksById(Guid id)

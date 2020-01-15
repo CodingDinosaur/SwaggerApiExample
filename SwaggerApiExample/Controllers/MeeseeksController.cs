@@ -39,7 +39,7 @@ namespace SwaggerApiExample.Controllers
         /// </remarks>
         /// <param name="request">Meeseeks request information</param>
         /// <returns></returns>
-        [HttpPost("")]
+        [HttpPost("tasks")]
         [ProducesResponseType(typeof(StartMeeseeksTaskResponse), 200)]
         [ProducesResponseType(typeof(TaskStartFailureInfo), 500)]
         public async Task<IActionResult> StartTask(StartMeeseeksTaskRequest request)
@@ -50,10 +50,7 @@ namespace SwaggerApiExample.Controllers
                 return StatusCode(500, new TaskStartFailureInfo("Task generator was unable to determine task type"));
             }
 
-            var genericMethod = _meeseeksManager.GetType().GetMethod(nameof(_meeseeksManager.SpawnMeeseeksForTask))
-                ?.MakeGenericMethod(typeInfo);
-            var meeseeksInfo = genericMethod?.Invoke(_meeseeksManager, new object[] { task }) as MrMeeseeks;
-            
+            var meeseeksInfo = _meeseeksManager.SpawnMeeseeksForTask(task);
             if (meeseeksInfo == null) { return Problem(); }
 
             await meeseeksInfo.CurrentTask.ExecuteAsync();
@@ -64,24 +61,24 @@ namespace SwaggerApiExample.Controllers
         /// Get basic information for all running Meeseeks tasks
         /// </summary>
         /// <returns></returns>
-        [HttpGet("")]
+        [HttpGet("tasks")]
         [Produces(typeof(BaseMeeseeksTask[]))]
         [ProducesResponseType(typeof(BaseMeeseeksTask[]), 200)]
-        public IActionResult GetAllRunningTasks()
+        public IActionResult GetAllActiveTasks()
         {
-            var allTasks = _meeseeksManager.GetAllRunningTasks().ToArray();
-            return Ok(allTasks);
+            var allRunningTasks = _meeseeksManager.GetAllRunningTasks();
+            return Ok(allRunningTasks);
         }
 
         /// <summary>
-        /// Get a detailed report on all Generic-type Meeseeks tasks, including info for the associated Mr. Meeseeks
+        /// Get a detailed report on all Meeseeks running tasks, including info for the associated Mr. Meeseeks
         /// </summary>
         /// <returns></returns>
-        [HttpGet("genericTasks")]
+        [HttpGet("")]
         [Produces(typeof(MeeseeksTaskStatus[]))]
-        public IActionResult GetGenericTaskReport()
+        public IActionResult GetMeeseeksTaskReport([FromQuery] MeeseeksTaskCategory taskCategoryFilter = MeeseeksTaskCategory.Unknown)
         {
-            var results = _meeseeksManager.GetAllMeeseeksOnTask<GeneralMeeseeksTask>()
+            var results = _meeseeksManager.GetAllMeeseeksOnTask(taskCategoryFilter)
                 .Select(m => new MeeseeksTaskStatus(m.Id, m.CurrentTask.TaskCategory, m.CurrentTask))
                 .ToArray();
 
